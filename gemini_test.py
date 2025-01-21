@@ -2,7 +2,7 @@ from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHan
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
@@ -32,14 +32,12 @@ docs = text_splitter.split_documents(loader.load())
 
 vector_store = Chroma.from_documents(documents = docs, embedding = embeddings)
 
-retriever = vector_store.as_retriever(search_type = "similarity", search_kwargs={"k":10})
-
-retrieved_docs = retriever.invoke("What is Task Decomposition?")
-llm = ChatGoogleGenerativeAI(model = "gemini-1.5-pro", temperature = 0.3, max_tokens = 250)
-system_prompt = """You are an assistant for question-answering tasks. 
+retriever = vector_store.as_retriever(search_type = "similarity", search_kwargs={"k":5})
+llm = ChatGoogleGenerativeAI(model = "gemini-1.5-pro", temperature = 0.3, max_tokens = 5000)
+system_prompt = """You are an assistant for question-answering tasks.
+Answer these questions as if you are talking to a Bioinformatics expert. 
 Use the following pieces of retrieved context to answer the question. 
-If you don't know the answer, just say that you don't know. 
-Use three sentences maximum and keep the answer concise.
+If you don't know the answer say you don't know.
 Context: {context} 
 Answer:"""
 
@@ -47,7 +45,30 @@ prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("user", "
 document_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, document_chain)
 
-response = rag_chain.invoke({"input":"What is Task Decomposition"}
-                      )
+response = rag_chain.invoke({"input":"What is Task Decomposition"})
+loader = PyPDFLoader("pdfs/banksy.pdf")
 
-print(response["answer"])
+# Consider adding in supplementary information to help answer the questions.
+# Does looking at the website help?
+
+def retrieve_document(loader, chunk_size=500):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size)
+    chunks = text_splitter.split_documents(loader.load())
+    db = Chroma.from_documents(chunks, embeddings, persist_directory='./chroma_db_')
+    db_connection = Chroma(persist_directory="./chroma_db_", embedding_function = embeddings)
+    retriever = db_connection.as_retriever(search_type = "similarity", search_kwargs = {"k":10})
+    return retriever
+
+def generate_document(loader, question):
+    retriever = retrieve_document(loader)
+    retrieved_docs = retriever.invoke(question)
+    document_chain = create_stuff_documents_chain(llm, prompt)
+    rag_chain = create_retrieval_chain(retriever, document_chain)
+    response = rag_chain.invoke({"input":question})
+    print(response["answer"])
+
+retrieve_document(loader)
+generate_document(loader, """I am a bioinformatician who wishes to learn more about the spatial clustering methods employed in scientific literature. From here on out, using only information from attached article as context, talk to me as if I am an expert and answer the following question:
+
+What are some method assumptions employed by BANKSY?
+""")
