@@ -67,7 +67,6 @@ def retrieve_document(loader, chunk_size=3200):
     bm25_retriever = BM25Retriever.from_texts([t.page_content for t in chunks])
     ensemble_retriever = EnsembleRetriever(retrievers=[bm25_retriever, retriever],
         weights=[0.5, 0.5])
-
     return ensemble_retriever
 
 def generate_document(loader, question):
@@ -75,7 +74,7 @@ def generate_document(loader, question):
     document_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, document_chain)
     response = rag_chain.invoke({"input":question})
-    print(response["answer"])
+    return response["answer"]
 
 generate_document(loader, """I am a bioinformatician who wishes to learn more about the spatial clustering methods employed in scientific literature. From here on out, using only information from attached article as context, talk to me as if I am an expert and answer the following question:
 
