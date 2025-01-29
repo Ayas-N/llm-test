@@ -127,5 +127,7 @@ agent_history = RunnableWithMessageHistory(
     history_messages_key= "chat_history",
 )
 
-agent_history.invoke({"input": usr_input},
+response = agent_history.invoke({"input": usr_input},
                        config={"configurable": {"session_id": "<foo>"}})
+
+print(response['output'])

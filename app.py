@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
@@ -15,6 +14,8 @@ from langchain.retrievers import EnsembleRetriever
 from langchain.chains import create_retrieval_chain
 from langchain_community.tools.tavily_search import TavilySearchResults
 from prompts import prompt
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 import os
 
 os.environ["LANGSMITH_TRACING"] = "true"
@@ -36,7 +37,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 def retrieve_document(filename, chunk_size=3200):
-    loader = PyPDFLoader(f"tmp/{filename}.pdf")
+    loader = PyPDFLoader(f"tmp/{filename}")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size)
     chunks = text_splitter.split_documents(loader.load())
     Chroma.from_documents(chunks, embeddings, persist_directory='./chroma_db_')
@@ -49,6 +50,7 @@ def retrieve_document(filename, chunk_size=3200):
     return ensemble_retriever
 
 def generate_document(filename):
+    '''Creates a tool that extracts relevant information from pdf files existing in the tmp folder.'''
     print(filename)
     retriever = retrieve_document(filename)
     as_tool = retriever.as_tool(
@@ -58,22 +60,33 @@ def generate_document(filename):
 
     return as_tool
 
-uploaded_file = st.file_uploader("Upload an article", type=('pdf'))
-if uploaded_file is not None:
-    filename = uploaded_file.name
+uploaded_file = st.file_uploader("Upload an article", type=('pdf'), accept_multiple_files= True)
+
+for file in uploaded_file:
+    filename = file.name
     # Can I write the files to a temp storage? Answer: Yes!
     with open(f'tmp/{filename}', 'wb') as f:
         print("File has been written")
-        f.write(uploaded_file.getvalue())
+        f.write(file.getvalue())
 
 agent_prompt = PromptTemplate(template= prompt)
+memory = ChatMessageHistory(session_id="test-session")
+
 def respond(usr_input):
-    tools = [generate_document("bass"), TavilySearchResults(max_results = 3)]
+    tools = [generate_document(pdf.name) for pdf in uploaded_file]
+    tools.append(TavilySearchResults(max_results = 3))
     agent = create_react_agent(llm, tools, agent_prompt)
     # Create an agent executor by passing in the agent and tools
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    response = agent_executor.invoke({"input":{usr_input},
-                        "chat_history": "Human: Hi act as if you are a Bioinformatics expert in Spatial Transcriptomics"})
+    agent_history = RunnableWithMessageHistory(
+        agent_executor,
+        lambda session_id: memory,
+        input_messages_key= "input",
+        history_messages_key= "chat_history",
+    )
+    response = agent_history.invoke({"input":{usr_input},
+                        "chat_history": "Human: Hi act as if you are a Bioinformatics expert in Spatial Transcriptomics"},
+                        config={"configurable": {"session_id": "<foo>"}})
     return response
 
 # Respond to user
