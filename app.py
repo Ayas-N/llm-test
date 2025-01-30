@@ -16,6 +16,10 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from prompts import prompt
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import os
 
 os.environ["LANGSMITH_TRACING"] = "true"
