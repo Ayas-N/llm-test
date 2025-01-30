@@ -23,6 +23,8 @@ os.environ["GOOGLE_API_KEY"] = open('gemini_apikey.txt').read()
 if not os.environ.get("TAVILY_API_KEY"):
     os.environ["TAVILY_API_KEY"] = open('tavilyapi.txt').read()
 
+ChatGoogleGenerativeAI
+
 llm = ChatGoogleGenerativeAI(model = "gemini-1.5-flash", temperature = 0.5, max_tokens = 5000)
 embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
 system_prompt = """You are an assistant for question-answering tasks.
@@ -127,7 +129,8 @@ agent_history = RunnableWithMessageHistory(
     history_messages_key= "chat_history",
 )
 
-response = agent_history.invoke({"input": usr_input},
+agent_history.invoke({"input": usr_input},
                        config={"configurable": {"session_id": "<foo>"}})
 
-print(response['output'])
+agent_history.invoke({"input": "What was the question I just asked?"},
+                       config={"configurable": {"session_id": "<foo>"}})

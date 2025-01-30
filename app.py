@@ -25,10 +25,6 @@ if not os.environ.get("TAVILY_API_KEY"):
 api_key = open('gemini_apikey.txt').read()
 llm = ChatGoogleGenerativeAI(model = "gemini-1.5-flash", temperature = 0.3, max_tokens = 5000, api_key = api_key)
 embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001", google_api_key = api_key)
-
-with st.chat_message("user"):
-    st.write("Hello")
-
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -73,26 +69,29 @@ agent_prompt = PromptTemplate(template= prompt)
 memory = ChatMessageHistory(session_id="test-session")
 
 def respond(usr_input):
-    tools = [generate_document(pdf.name) for pdf in uploaded_file]
-    tools.append(TavilySearchResults(max_results = 3))
-    agent = create_react_agent(llm, tools, agent_prompt)
-    # Create an agent executor by passing in the agent and tools
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent_history = RunnableWithMessageHistory(
-        agent_executor,
-        lambda session_id: memory,
-        input_messages_key= "input",
-        history_messages_key= "chat_history",
-    )
-    response = agent_history.invoke({"input":{usr_input},
-                        "chat_history": "Human: Hi act as if you are a Bioinformatics expert in Spatial Transcriptomics"},
+    if 'agent_history' not in st.session_state:
+        tools = [generate_document(pdf.name) for pdf in uploaded_file]
+        tools.append(TavilySearchResults(max_results = 5))
+        agent = create_react_agent(llm, tools, agent_prompt)
+        # Create an agent executor by passing in the agent and tools
+        agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+        st.session_state['agent_history'] = RunnableWithMessageHistory(
+            agent_executor,
+            lambda session_id: memory,
+            input_messages_key= "input",
+            history_messages_key= "chat_history",
+            )
+    response = st.session_state['agent_history'].invoke({"input":usr_input,},
                         config={"configurable": {"session_id": "<foo>"}})
     return response
 
 # Respond to user
 if usr_input := st.chat_input():
-    # Display user message in chat message container
     st.chat_message("user").markdown(usr_input)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": usr_input})   
     with st.spinner('Processing...'):
         llm_answer = respond(usr_input)["output"]
         response = st.chat_message("assistant").markdown(llm_answer)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "assistant", "content": llm_answer})   
