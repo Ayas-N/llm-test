@@ -10,12 +10,16 @@ from langchain.retrievers import EnsembleRetriever
 from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import create_retrieval_chain
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, MessagesState, StateGraph
+
 import bs4
 
 from sys import argv
 import getpass
 import os
 
+workflow = StateGraph(state_schema = MessagesState)
 os.environ["LANGSMITH_TRACING"] = "true"
 os.environ["LANGSMITH_API_KEY"] = open(file= 'langsmith_apikey.txt').read()
 os.environ["GOOGLE_API_KEY"] = open('gemini_apikey.txt').read()
