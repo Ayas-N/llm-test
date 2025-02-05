@@ -46,7 +46,7 @@ def generate_document(filename):
 
     return as_tool
 
-agent_prompt = PromptTemplate(template= prompts.data_prompt1)
+agent_prompt = PromptTemplate(template= prompts.data_prompt2)
 memory = ChatMessageHistory(session_id="test-session")
 
 def respond(usr_input, filename):
