@@ -1,0 +1,86 @@
+Algorithm, BASS
+Package, No
+Bioconductor, No
+CRAN, No
+Vignette, No
+Vignette with different examples of different technologies, No
+R, Yes
+Python, No
+C++, No
+Centroid-based, No
+Hierarchical, Yes
+Density-based, No
+Distribution-based, No
+Unsupervised ML, Yes
+Supervised ML, No
+GNN, No
+AE, No
+Ensemble model, No
+Domain, No
+Cell type, Yes
+Unclear, No
+Nearest neighbour assumption (explicit), Yes
+Number of cell types / domains are known (explicit), No
+Spatially-transformed expression matrix, Yes
+Low dimension with spatial embedding, No
+Accessible, No
+Raw, No
+Normalised, Yes
+Transcript count, No
+Low-resolution spot, Yes
+High-resolution spot, No
+Cellular, No
+Segmentation-free subcellular, No
+Inherent multisample clustering, No
+Joint clustering, No
+Visium human DLPFC (Maynard et al), Yes
+MERFISH mouse hypothalamus (Mofitt et al), No
+STARmap mouse mPFC (Wang et al), No
+Other datasets used, Yes
+Spot-based low resolution, Yes
+Spot-based high resolution, No
+Imaging-based, No
+scRNA-seq, Yes
+Fluorescence image, No
+Histology image, No
+For <10k cells, Good
+For upto 100k cells, Medium
+For upto 1m cells, Medium
+For >1 m cells, Bad
+Unclear, No
+GPU, No
+Segmentation error, No
+Spot swapping, No
+Sparsity, Yes
+Batch effects, No
+Resolution, No
+Rare cell type detection, Yes
+Augmented input matrix, Yes
+Joint low dimension, No
+Tailored, No
+2D, Yes
+3D, No
+Neighbourhood graph, No
+Spatiotemporal, No
+Nearest neighbour assumption, Yes
+Adjusted Rand Index (ARI), Yes
+Normalised Mutual Information (NMI), Yes
+Adjusted Mutual Information (AMI), Yes
+Average silhouette width (ASW) / Silhouette coefficient, Yes
+Moran's I, Yes
+Geary's C, No
+Davies-Bouldin (DB) index, Yes
+Calinski-Harabasz (CH) Index, Yes
+Clustering Homogeneity Across Overlapping Subsets (CHAOS), No
+Homogeneity (HOM), Yes
+Completeness (COM), Yes
+Proportion of Ambiguous Spots (PAS), No
+Cell Stability Score (CSS), No
+Spatial Coherence Score (SCS), Yes
+Realistic, Yes
+Unrealistic, No
+Simulation included, No
+Scalability assessment, Yes
+Accuracy assessment, Yes
+Stress testing, No
+Parameter testing, Yes
