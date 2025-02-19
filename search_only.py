@@ -42,7 +42,7 @@ def respond(usr_input, filename):
     return response
 
 def generate_with_agent(algorithm):
-    usr_input = f"""Please summarise {algorithm}"""
+    usr_input = f"""Please summarise {algorithm} the spatial transcriptomics algorithm"""
 
     llm_answer = respond(usr_input, algorithm)["output"]
     return llm_answer

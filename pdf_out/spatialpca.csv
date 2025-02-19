@@ -5,7 +5,7 @@ CRAN,No
 Vignette,Yes
 Vignette with different examples of different technologies,Yes
 R,Yes
-Python,Yes
+Python,No
 C++,No
 Centroid-based,No
 Hierarchical,No
@@ -19,20 +19,20 @@ Ensemble model,No
 Domain,Yes
 Cell type,Yes
 Unclear,No
-Nearest neighbour assumption (explicit),No
+Nearest neighbour assumption (explicit),Yes
 Number of cell types / domains are known (explicit),No
 Spatially-transformed expression matrix,Yes
 Low dimension with spatial embedding,Yes
 Accessible,Yes
 Raw,No
-Normalised,Yes
+Normalised,No
 Transcript count,No
 Low-resolution spot,Yes
 High-resolution spot,Yes
 Cellular,Yes
 Segmentation-free subcellular,No
-Inherent multisample clustering,Yes
-Joint clustering,No
+Inherent multisample clustering,No
+Joint clustering,Yes
 Visium human DLPFC (Maynard et al),Yes
 MERFISH mouse hypothalamus (Mofitt et al),Yes
 STARmap mouse mPFC (Wang et al),No
@@ -52,8 +52,8 @@ GPU,No
 Segmentation error,No
 Spot swapping,No
 Sparsity,No
-Batch effects,Yes
-Resolution,No
+Batch effects,No
+Resolution,Yes
 Rare cell type detection,No
 Augmented input matrix,Yes
 Joint low dimension,Yes
@@ -62,11 +62,11 @@ Tailored,No
 3D,No
 Neighbourhood graph,No
 Spatiotemporal,No
-Nearest neighbour assumption,No
+Nearest neighbour assumption,Yes
 Adjusted Rand Index (ARI),Yes
 Normalised Mutual Information (NMI),No
 Adjusted Mutual Information (AMI),No
-Average silhouette width (ASW) / Silhouette coeficient,Yes
+Average silhouette width (ASW) / Silhouette coefficient,Yes
 Moran's I,No
 Geary's C,No
 Davies-Bouldin (DB) index,No

@@ -8,7 +8,6 @@ from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
-from langchain.chains import create_retrieval_chain
 from langchain_community.tools.tavily_search import TavilySearchResults
 import prompts
 from langchain_community.chat_message_histories import ChatMessageHistory

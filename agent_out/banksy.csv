@@ -66,7 +66,7 @@ Nearest neighbour assumption,Yes
 Adjusted Rand Index (ARI),Yes
 Normalised Mutual Information (NMI),Yes
 Adjusted Mutual Information (AMI),Yes
-Average silhouette width (ASW) / Silhouette coeficient,Yes
+Average silhouette width (ASW) / Silhouette coefficient,Yes
 Moran's I,Yes
 Geary's C,Yes
 Davies-Bouldin (DB) index,Yes

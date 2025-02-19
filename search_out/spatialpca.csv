@@ -11,7 +11,7 @@ Centroid-based,No
 Hierarchical,No
 Density-based,No
 Distribution-based,No
-Unsupervised ML,Yes
+Unsupervised ML,No
 Supervised ML,No
 GNN,No
 AE,No
@@ -64,13 +64,13 @@ Neighbourhood graph,No
 Spatiotemporal,No
 Nearest neighbour assumption,No
 Adjusted Rand Index (ARI),Yes
-Normalised Mutual Information (NMI),Yes
-Adjusted Mutual Information (AMI),Yes
-Average silhouette width (ASW) / Silhouette coeficient,Yes
-Moran's I,Yes
-Geary's C,Yes
-Davies-Bouldin (DB) index,Yes
-Calinski-Harabasz (CH) Index,Yes
+Normalised Mutual Information (NMI),No
+Adjusted Mutual Information (AMI),No
+Average silhouette width (ASW) / Silhouette coefficient,No
+Moran's I,No
+Geary's C,No
+Davies-Bouldin (DB) index,No
+Calinski-Harabasz (CH) Index,No
 Clustering Homogeneity Across Overlapping Subsets (CHAOS),No
 Homogeneity (HOM),No
 Completeness (COM),No
@@ -79,7 +79,7 @@ Cell Stability Score (CSS),No
 Spatial Coherence Score (SCS),No
 Realistic,Yes
 Unrealistic,No
-Simulation included,Yes
+Simulation included,No
 Scalability assessment,Yes
 Accuracy assessment,Yes
 Stress testing,No

@@ -1,12 +1,12 @@
 Algorithm,CCST
-Package,Yes
+Package,No
 Bioconductor,No
 CRAN,No
-Vignette,Yes
+Vignette,No
 Vignette with different examples of different technologies,Yes
 R,No
 Python,No
-C++,Yes
+C++,No
 Centroid-based,No
 Hierarchical,No
 Density-based,No
@@ -19,18 +19,18 @@ Ensemble model,No
 Domain,Yes
 Cell type,Yes
 Unclear,No
-Nearest neighbour assumption (explicit),No
+Nearest neighbour assumption (explicit),Yes
 Number of cell types / domains are known (explicit),No
-Spatially-transformed expression matrix,Yes
+Spatially-transformed expression matrix,No
 Low dimension with spatial embedding,Yes
 Accessible,No
 Raw,No
-Normalised,Yes
+Normalised,No
 Transcript count,No
 Low-resolution spot,Yes
-High-resolution spot,Yes
+High-resolution spot,No
 Cellular,Yes
-Segmentation-free subcellular,No
+Segmentation-free subcellular,Yes
 Inherent multisample clustering,No
 Joint clustering,No
 Visium human DLPFC (Maynard et al),Yes
@@ -38,16 +38,16 @@ MERFISH mouse hypothalamus (Mofitt et al),No
 STARmap mouse mPFC (Wang et al),No
 Other datasets used,Yes
 Spot-based low resolution,Yes
-Spot-based high resolution,Yes
+Spot-based high resolution,No
 Imaging-based,Yes
 scRNA-seq,No
 Fluorescence image,No
 Histology image,No
-For <10k cells,Unclear
-For upto 100k cells,Unclear
-For upto 1m cells,Unclear
-For >1 m cells,Unclear
-Unclear,Yes
+For <10k cells,Good
+For upto 100k cells,Medium
+For upto 1m cells,Bad
+For >1 m cells,Bad
+Unclear,No
 GPU,No
 Segmentation error,No
 Spot swapping,No
@@ -55,18 +55,18 @@ Sparsity,No
 Batch effects,No
 Resolution,No
 Rare cell type detection,No
-Augmented input matrix,Yes
+Augmented input matrix,No
 Joint low dimension,Yes
 Tailored,No
 2D,Yes
 3D,No
 Neighbourhood graph,Yes
 Spatiotemporal,No
-Nearest neighbour assumption,No
+Nearest neighbour assumption,Yes
 Adjusted Rand Index (ARI),Yes
 Normalised Mutual Information (NMI),Yes
-Adjusted Mutual Information (AMI),No
-Average silhouette width (ASW) / Silhouette coeficient,No
+Adjusted Mutual Information (AMI),Yes
+Average silhouette width (ASW) / Silhouette coefficient,Yes
 Moran's I,No
 Geary's C,No
 Davies-Bouldin (DB) index,No
@@ -80,7 +80,7 @@ Spatial Coherence Score (SCS),No
 Realistic,Yes
 Unrealistic,No
 Simulation included,No
-Scalability assessment,No
+Scalability assessment,Yes
 Accuracy assessment,Yes
 Stress testing,No
 Parameter testing,No

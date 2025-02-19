@@ -23,7 +23,7 @@ Nearest neighbour assumption (explicit),No
 Number of cell types / domains are known (explicit),No
 Spatially-transformed expression matrix,No
 Low dimension with spatial embedding,No
-Accessible,No
+Accessible,Yes
 Raw,No
 Normalised,Yes
 Transcript count,No
@@ -44,20 +44,20 @@ scRNA-seq,No
 Fluorescence image,No
 Histology image,No
 For <10k cells,Good
-For upto 100k cells,Medium
-For upto 1m cells,Bad
+For upto 100k cells,Good
+For upto 1m cells,Medium
 For >1 m cells,Bad
 Unclear,No
 GPU,No
 Segmentation error,No
 Spot swapping,No
-Sparsity,Yes
+Sparsity,No
 Batch effects,No
 Resolution,No
-Rare cell type detection,Yes
+Rare cell type detection,No
 Augmented input matrix,No
 Joint low dimension,No
-Tailored,No
+Tailored,Yes
 2D,Yes
 3D,No
 Neighbourhood graph,No
@@ -66,17 +66,17 @@ Nearest neighbour assumption,No
 Adjusted Rand Index (ARI),Yes
 Normalised Mutual Information (NMI),Yes
 Adjusted Mutual Information (AMI),Yes
-Average silhouette width (ASW) / Silhouette coeficient,Yes
+Average silhouette width (ASW) / Silhouette coefficient,Yes
 Moran's I,Yes
 Geary's C,Yes
 Davies-Bouldin (DB) index,Yes
 Calinski-Harabasz (CH) Index,Yes
-Clustering Homogeneity Across Overlapping Subsets (CHAOS),Yes
-Homogeneity (HOM),Yes
-Completeness (COM),Yes
-Proportion of Ambiguous Spots (PAS),Yes
-Cell Stability Score (CSS),Yes
-Spatial Coherence Score (SCS),Yes
+Clustering Homogeneity Across Overlapping Subsets (CHAOS),No
+Homogeneity (HOM),No
+Completeness (COM),No
+Proportion of Ambiguous Spots (PAS),No
+Cell Stability Score (CSS),No
+Spatial Coherence Score (SCS),No
 Realistic,Yes
 Unrealistic,No
 Simulation included,Yes

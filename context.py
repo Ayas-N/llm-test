@@ -10,8 +10,14 @@ from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
 from langchain_community.tools.tavily_search import TavilySearchResults
 import prompts
+from pypdf import PdfReader
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from ragas import SingleTurnSample
+from ragas.metrics import(
+    NonLLMContextPrecisionWithReference
+)
+
 import os
 
 os.environ["LANGSMITH_TRACING"] = "true"
@@ -45,11 +51,12 @@ def generate_document(filename):
 
     return as_tool
 
-agent_prompt = PromptTemplate(template= prompts.data_prompt2)
+agent_prompt = PromptTemplate(template= prompts.data_prompt1)
 memory = ChatMessageHistory(session_id="test-session")
 
 def respond(usr_input, filename):
     tools = [generate_document(filename)]
+    tools.append(TavilySearchResults(max_results = 5))
     agent = create_react_agent(llm, tools, agent_prompt)
     # Create an agent executor by passing in the agent and tools
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
@@ -64,12 +71,22 @@ def respond(usr_input, filename):
     return response
 
 def generate_with_agent(algorithm):
-    usr_input = f"""Please summarise {algorithm} the spatial transcriptomics algorithm"""
+    usr_input = f"""Please summarise {algorithm}"""
 
     llm_answer = respond(usr_input, algorithm)["output"]
     return llm_answer
 
-pdfs = [os.path.splitext(filename)[0] for filename in os.listdir("pdfs")]
-for algo in pdfs:
-    with open(f"pdf_out/{algo}.csv", "w") as f:
-        f.write(generate_with_agent(algo))
+result = generate_with_agent('banksy')
+context_precision = NonLLMContextPrecisionWithReference()
+reader = PdfReader("pdfs/banksy.pdf")
+raw = reader.pages[0].extract_text()
+
+sample = SingleTurnSample(
+    retrieved_contexts=[result], 
+    reference_contexts=[raw]
+)
+
+def print_result():
+    print(context_precision.single_turn_score(sample))
+
+print_result()
