@@ -2,17 +2,18 @@ import pandas as pd
 import os
 from matplotlib import pyplot as plt
 
-def load_sheet(folder):
+def load_sheet(folder, sim_no):
     '''Given a folder, load all csv files for each clustering methods
     folder: str of folder name
+    sim_no: int of simulation number
     returns: A dataframe containing all LLM predictions for clustering categories'''
-    df = pd.read_csv(f"{folder}/banksy.csv", index_col= 0, skipinitialspace= True).transpose()
+    df = pd.read_csv(f"sim{sim_no}/{folder}/banksy.csv", index_col= 0, skipinitialspace= True).transpose()
     df.index = df.index.str.strip()
 
-    for sheet in os.listdir(folder)[1:]:
+    for sheet in os.listdir(f"sim{sim_no}/{folder}")[1:]:
         try: 
             if sheet.endswith(".csv"):
-                tmp_df = pd.read_csv(f"{folder}/{sheet}", index_col= 0, skipinitialspace= True).transpose()
+                tmp_df = pd.read_csv(f"sim{sim_no}/{folder}/{sheet}", index_col= 0, skipinitialspace= True).transpose()
                 tmp_df.index = tmp_df.index.str.strip()
                 df = pd.concat([df,tmp_df], axis = 0)
         except Exception as e:
@@ -42,32 +43,54 @@ def load_google_sheet():
 
     return info
 
-agent = load_sheet("agent_out")
-gpt = load_sheet("gpt_out")
-pdfs = load_sheet("pdf_out")
-search = load_sheet("search_out")
-truth = load_google_sheet()
-truth = truth[~truth.index.duplicated(keep='first')]
-truth.reset_index(inplace= True)
+def filter_and_compare(llm_df, truth):
+    '''Joins a method with a specified category and the ground truth dataframe together and 
+    performs a comparison, by calculating the number of matching terms.
+    
+    llm_df (df): Dataframe of LLM
+    truth (df): Ground Truth dataframe
+    method (str): Method to filter on 
+    returns final: A dataframe containing the correctness of each algorithm'''
+    methods = ['agent_out', 'gpt_out', 'search_out', 'pdf_out']
+    dfs = []
+    for method in methods:
+        agent_filter = llm_df[llm_df['Source'] == method]
+        agent_filter['Algorithm'] =  agent_filter['Algorithm'].str.upper()
+        truth['Algorithm'] = truth['Algorithm'].str.upper()
 
-llm_df = pd.concat([agent, gpt, search, pdfs])
-llm_df.reset_index(inplace = True)
-llm_df.rename(columns = {"index":"Algorithm"}, inplace = True)
-llm_df.columns.name = None
+        truth_filter = truth[truth['Algorithm'].isin(agent_filter['Algorithm'])]
+        agent_filter = agent_filter[agent_filter['Algorithm'].isin(truth['Algorithm'])]
 
-llm_df.columns = truth.columns
-agent_filter = llm_df[llm_df['Source'] == "agent_out"]
+        agent_filter = agent_filter.sort_values(by= 'Algorithm').reset_index(drop = True)
+        truth_filter = truth_filter.sort_values(by= 'Algorithm').reset_index(drop = True)
 
-truth_filter = truth[truth['Algorithm'].isin(agent_filter['Algorithm'])]
-agent_filter = agent_filter[agent_filter['Algorithm'].isin(truth['Algorithm'])]
+        compare = agent_filter.eq(truth_filter)
+        compare['Algorithm'] = agent_filter['Algorithm']
+        compare['Correct_Terms'] = compare.drop(columns='Algorithm').sum(axis = 1)
+        compare['Correct_Percent'] = 100* compare['Correct_Terms'] / compare.shape[1]
+        compare['Method'] = method 
+        dfs.append(compare)
 
-agent_filter = agent_filter.sort_values(by= 'Algorithm').reset_index(drop = True)
-truth_filter = truth_filter.sort_values(by= 'Algorithm').reset_index(drop = True)
+    final = pd.concat(dfs)
+    return final
 
-compare = agent_filter.eq(truth_filter)
-compare['Algorithm'] = agent_filter['Algorithm']
-compare['Correct_Terms'] = compare.drop(columns='Algorithm').sum(axis = 1)
-compare['Correct_Percent'] = 100* compare['Correct_Terms'] / compare.shape[1]
-print(compare)
+def evaluate(sim_no):
+    '''Whole evaluation for entire pipeline for simulation i'''
+    agent = load_sheet("agent_out", sim_no)
+    gpt = load_sheet("gpt_out", sim_no)
+    pdfs = load_sheet("pdf_out", sim_no)
+    search = load_sheet("search_out", sim_no)
+    truth = load_google_sheet()
+    truth = truth[~truth.index.duplicated(keep='first')]
+    truth.reset_index(inplace= True)
 
+    llm_df = pd.concat([agent, gpt, search, pdfs])
+    llm_df.reset_index(inplace = True)
+    llm_df.rename(columns = {"index":"Algorithm"}, inplace = True)
+    truth.columns = llm_df.columns
+    llm_df.columns.name = None
+    print(filter_and_compare(llm_df, truth))
+    return
 
+for i in range(1,6):
+    evaluate(i)

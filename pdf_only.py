@@ -70,6 +70,7 @@ def generate_with_agent(algorithm):
     return llm_answer
 
 pdfs = [os.path.splitext(filename)[0] for filename in os.listdir("pdfs")]
-for algo in pdfs:
-    with open(f"pdf_out/{algo}.csv", "w") as f:
-        f.write(generate_with_agent(algo))
+for i in range(2,6):
+    for algo in pdfs:
+        with open(f"sim{i}/pdf_out/{algo}.csv", "w") as f:
+            f.write(generate_with_agent(algo))

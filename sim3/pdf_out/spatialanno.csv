@@ -1,0 +1,88 @@
+Algorithm,SpatialAnno
+Package,Yes
+Bioconductor,No
+CRAN,No
+Vignette,Yes
+Vignette with different examples of different technologies,Yes
+R,Yes
+Python,No
+C++,No
+Centroid-based,No
+Hierarchical,No
+Density-based,No
+Distribution-based,No
+Unsupervised ML,No
+Supervised ML,No
+GNN,No
+AE,No
+Ensemble model,No
+Domain,Yes
+Cell type,Yes
+Unclear,No
+Nearest neighbour assumption (explicit),Yes
+Number of cell types / domains are known (explicit),Yes
+Spatially-transformed expression matrix,No
+Low dimension with spatial embedding,Yes
+Accessible,Yes
+Raw,No
+Normalised,Yes
+Transcript count,No
+Low-resolution spot,Yes
+High-resolution spot,Yes
+Cellular,No
+Segmentation-free subcellular,No
+Inherent multisample clustering,No
+Joint clustering,No
+Visium human DLPFC (Maynard et al),Yes
+MERFISH mouse hypothalamus (Mofitt et al),No
+STARmap mouse mPFC (Wang et al),No
+Other datasets used,Yes
+Spot-based low resolution,Yes
+Spot-based high resolution,Yes
+Imaging-based,No
+scRNA-seq,No
+Fluorescence image,No
+Histology image,No
+For <10k cells,Good
+For upto 100k cells,Good
+For upto 1m cells,Medium
+For >1 m cells,Bad
+Unclear,No
+GPU,No
+Segmentation error,No
+Spot swapping,No
+Sparsity,No
+Batch effects,No
+Resolution,No
+Rare cell type detection,No
+Augmented input matrix,No
+Joint low dimension,Yes
+Tailored,No
+2D,Yes
+3D,No
+Neighbourhood graph,No
+Spatiotemporal,No
+Nearest neighbour assumption,Yes
+Adjusted Rand Index (ARI),Yes
+Normalised Mutual Information (NMI),No
+Adjusted Mutual Information (AMI),No
+Average silhouette width (ASW) / Silhouette coefficient,No
+Moran's I,No
+Geary's C,No
+Davies-Bouldin (DB) index,No
+Calinski-Harabasz (CH) Index,No
+Clustering Homogeneity Across Overlapping Subsets (CHAOS),No
+Homogeneity (HOM),No
+Completeness (COM),No
+Proportion of Ambiguous Spots (PAS),No
+Cell Stability Score (CSS),No
+Spatial Coherence Score (SCS),No
+Realistic,Yes
+Unrealistic,No
+Simulation included,Yes
+Scalability assessment,Yes
+Accuracy assessment,Yes
+Stress testing,Yes
+Parameter testing,Yes
+
+```

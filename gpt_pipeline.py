@@ -39,6 +39,7 @@ def generate_with_agent(algorithm):
     return latest_message
 
 pdfs = [os.path.splitext(filename)[0] for filename in os.listdir("pdfs")]
-for algo in pdfs:
-    with open(f"gpt_out/{algo}.csv", "w") as f:
-        f.write(generate_with_agent(algo))
+for i in range(2,6):
+    for algo in pdfs:
+        with open(f"sim{i}/gpt_out/{algo}.csv", "w") as f:
+            f.write(generate_with_agent(algo))
