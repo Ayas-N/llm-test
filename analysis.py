@@ -2,11 +2,23 @@ import pandas as pd
 import os
 from matplotlib import pyplot as plt
 
+def clean_file(filename):
+    '''A function to clean up the output because Gemini is too dumb to answer in the specified output.
+    folder: str of filename name
+    returns: None'''
+    with open(filename,'r') as file:
+        lines = file.readlines()
+    
+    cleaned_lines = [line.strip() for line in lines if '```' not in line]
+    with open(filename,'w') as file:
+        file.write('\n'.join(cleaned_lines))
+
 def load_sheet(folder, sim_no):
     '''Given a folder, load all csv files for each clustering methods
     folder: str of folder name
     sim_no: int of simulation number
     returns: A dataframe containing all LLM predictions for clustering categories'''
+    clean_file(f"sim{sim_no}/{folder}/banksy.csv")
     df = pd.read_csv(f"sim{sim_no}/{folder}/banksy.csv", index_col= 0, skipinitialspace= True).transpose()
     df.index = df.index.str.strip()
 
