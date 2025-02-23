@@ -1,6 +1,7 @@
 import pandas as pd 
 import os
 from matplotlib import pyplot as plt
+import numpy as np
 
 def clean_file(filename):
     '''A function to clean up the output because Gemini is too dumb to answer in the specified output.
@@ -9,9 +10,9 @@ def clean_file(filename):
     with open(filename,'r') as file:
         lines = file.readlines()
     
-    cleaned_lines = [line.strip() for line in lines if '```' not in line]
+    cleaned_lines = [line.strip("```") for line in lines if '```' not in line]
     with open(filename,'w') as file:
-        file.write('\n'.join(cleaned_lines))
+        file.write(''.join(cleaned_lines))
 
 def load_sheet(folder, sim_no):
     '''Given a folder, load all csv files for each clustering methods
@@ -19,14 +20,27 @@ def load_sheet(folder, sim_no):
     sim_no: int of simulation number
     returns: A dataframe containing all LLM predictions for clustering categories'''
     clean_file(f"sim{sim_no}/{folder}/banksy.csv")
+    # Grab the first 85 columns, have to do this beceause somehow Gemini messed up the one job it had.
     df = pd.read_csv(f"sim{sim_no}/{folder}/banksy.csv", index_col= 0, skipinitialspace= True).transpose()
+    df = df.iloc[:,:85]
     df.index = df.index.str.strip()
 
     for sheet in os.listdir(f"sim{sim_no}/{folder}")[1:]:
         try: 
             if sheet.endswith(".csv"):
+                clean_file(f"sim{sim_no}/{folder}/{sheet}")
                 tmp_df = pd.read_csv(f"sim{sim_no}/{folder}/{sheet}", index_col= 0, skipinitialspace= True).transpose()
+                # If there isn't the right columns after all this, you are disqualified!
+                if tmp_df.shape[1] < 85:
+                    tmp_df = pd.DataFrame([["None"] * len(df.columns)], columns = df.columns,
+                                       index = [sheet[:-4].upper()]
+                                       )
+                    tmp_df.index = tmp_df.index.str.strip()
+                    df = pd.concat([df,tmp_df], axis = 0)
+                    continue
+                tmp_df = tmp_df.iloc[:,:85]
                 tmp_df.index = tmp_df.index.str.strip()
+                tmp_df.columns = df.columns 
                 df = pd.concat([df,tmp_df], axis = 0)
         except Exception as e:
             print(e)
