@@ -3,7 +3,7 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-def clean_file(filename):
+def clean_file(filename: str) -> None:
     '''A function to clean up the output because Gemini is too dumb to answer in the specified output.
     folder: str of filename name
     returns: None'''
@@ -14,7 +14,7 @@ def clean_file(filename):
     with open(filename,'w') as file:
         file.write(''.join(cleaned_lines))
 
-def load_sheet(folder, sim_no):
+def load_sheet(folder: str, sim_no: int) -> pd.DataFrame:
     '''Given a folder, load all csv files for each clustering methods
     folder: str of folder name
     sim_no: int of simulation number
@@ -57,7 +57,7 @@ def load_sheet(folder, sim_no):
     df['Source'] = folder
     return df
 
-def load_google_sheet():
+def load_google_sheet() -> pd.DataFrame:
     '''Loads the spatial clustering review information sheet from google Sheets
     returns: A dataframe containing all labels'''
     gsheetid = "1P1-Nw0i_MpLoE8he1H7ZT-acYd4jOgDPrKZBxR-L6dw"
@@ -69,13 +69,12 @@ def load_google_sheet():
 
     return info
 
-def filter_and_compare(llm_df, truth):
-    '''Joins a method with a specified category and the ground truth dataframe together and 
+def filter_and_compare(llm_df: pd.DataFrame, truth: pd.DataFrame) -> pd.DataFrame:
+    '''Joins a method with a specified LLM category and the ground truth dataframe together and 
     performs a comparison, by calculating the number of matching terms.
     
     llm_df (df): Dataframe of LLM
     truth (df): Ground Truth dataframe
-    method (str): Method to filter on 
     returns final: A dataframe containing the correctness of each algorithm'''
     methods = ['agent_out', 'gpt_out', 'search_out', 'pdf_out']
     dfs = []
@@ -100,8 +99,9 @@ def filter_and_compare(llm_df, truth):
     final = pd.concat(dfs)
     return final
 
-def evaluate(sim_no):
-    '''Whole evaluation for entire pipeline for simulation i'''
+def evaluate(sim_no: int) -> pd.DataFrame:
+    '''Whole evaluation for entire pipeline for simulation i
+    Returns: Dataframe'''
     agent = load_sheet("agent_out", sim_no)
     gpt = load_sheet("gpt_out", sim_no)
     pdfs = load_sheet("pdf_out", sim_no)
@@ -116,7 +116,8 @@ def evaluate(sim_no):
     truth.columns = llm_df.columns
     llm_df.columns.name = None
     print(filter_and_compare(llm_df, truth))
-    return
+    return filter_and_compare(llm_df, truth)
 
 for i in range(1,6):
-    evaluate(i)
+    simulation = evaluate(i)
+    simulation.to_csv(f"data/sim{i}.csv")
