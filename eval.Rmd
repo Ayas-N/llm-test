@@ -108,6 +108,8 @@ When looking at the performance for individual categories, we see a few trends
 ```{r}
 logic_df = all_sim %>% select(-c(X, Algorithm, Correct_Percent, Correct_Terms)) %>% dplyr::mutate(across(everything(), ~  case_when(. == "True"~ TRUE, . == "False" ~ FALSE)))
 
+
+all_sim$Method = plyr::revalue(all_sim$Method, c("pdf_out" = "Agent + PDF", "search_out" = "Agent + Search", "agent_out" = "Agent + Search + PDF", "gpt_out" = "GPT"))
 logic_df$Method = all_sim$Method
 df_len = dim(all_sim %>% filter(Method == "gpt_out"))[1]
 
@@ -117,6 +119,8 @@ correct_terms = correct_terms %>% mutate(across(where(is.integer), function(x){
   100 * x / df_len
 }))
 
+
+
 round_df <- function(x, digits){
   numeric_columns = sapply(x, mode) == 'numeric'
   x[numeric_columns] = round(x[numeric_columns], digits)
@@ -124,6 +128,7 @@ round_df <- function(x, digits){
 }
 
 rounded_df = round_df(correct_terms, 2)
+
 reactable(rounded_df)
 
 
