@@ -108,10 +108,10 @@ When looking at the performance for individual categories, we see a few trends
 ```{r}
 logic_df = all_sim %>% select(-c(X, Algorithm, Correct_Percent, Correct_Terms)) %>% dplyr::mutate(across(everything(), ~  case_when(. == "True"~ TRUE, . == "False" ~ FALSE)))
 
-
-all_sim$Method = plyr::revalue(all_sim$Method, c("pdf_out" = "Agent + PDF", "search_out" = "Agent + Search", "agent_out" = "Agent + Search + PDF", "gpt_out" = "GPT"))
 logic_df$Method = all_sim$Method
 df_len = dim(all_sim %>% filter(Method == "gpt_out"))[1]
+logic_df$Method = plyr::revalue(all_sim$Method, c("pdf_out" = "Agent + PDF", "search_out" = "Agent + Search", "agent_out" = "Agent + Search + PDF", "gpt_out" = "GPT"))
+
 
 correct_terms = logic_df %>% group_by(Method) %>% reframe(across(c(where(is.logical))))
 correct_terms = correct_terms %>% group_by(Method) %>% summarise(across(where(is.logical), sum)) %>% select(-Source)
@@ -157,5 +157,8 @@ knitr::include_graphics("figure/app_memory.png")
 Since the Agent makes use of various APIs such as Gemini and TavilySearch, the number of tokens becomes a limiting factor for the amount of times the Agent can be used on a monthly basis. Additionally, the Agent struggles with handling specific aspects such as determining scalability and understanding use of simulations in the article. Responses generated from the Agent could sometimes contain no relavant information when asked to answer more specific questions in regards to a spatial clustering method.
 
 Future work can involve investigating agentic workflows using other state-of-the-art LLMs such as Deepseek, Meta-LLama, and OpenAI if the computational resources allow it, supervised fine-tuning of the Gemini Models by creating datasets containing domain expert descriptions of spatial clustering techniques, and performing more thorough evaluations using reference-based metrics such as ROUGE and BERT similarity scores. 
+
+# Conclusion
+An agent was created and deployed to summarise aspects of spatial clustering methods employed in the field of spatial transcriptomics. It was shown that a Gemini Agent that made use of RAG and TavilySearch tools was capable of outperforming the ChatGPT end-user application in terms of correctness in categorising aspects such as methods, instructions, metrics, scalability, and simulations employed in a scientific article. The best iteration of the Agent made use of RAG without web search, however more work is needed to increase the depth of understanding and reasoning provided by an LLM when it came to justifying it's answers.
 
 
