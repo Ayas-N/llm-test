@@ -20,6 +20,9 @@ pysqlite3-binary
 click==8.1.8
 colorama==0.4.6
 coloredlogs==15.0.1
+selenium==4.28.1
+selenium-stealth==1.0.6
+seleniumbase==4.34.8
 dataclasses-json==0.6.7
 defusedxml==0.7.1
 Deprecated==1.2.15
