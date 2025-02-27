@@ -14,6 +14,9 @@ output:
     code_folding: hide
     code_tools: true
     global_numbering: true
+nocite: | 
+  @*
+bibliography: references.bib
 ---
 
 # Aim and Introduction 
@@ -22,23 +25,23 @@ This research project seeks to answer the following question: "Is it possible to
 # Methods
 The LLM Agent was developed using the Langchain framework, which allows for flexible abstractions during the development process. Langchain allows for easy integration of new features such as the use of embedding models for RAG and an AgentExecutor using the ReAct (Reasoning and Acting) Agent for a useful interface for helping the agent choose a relevant tool when coming up with a response. 
 
-```{r, fig.cap="Diagram of the Agent Execution Process, Curved Boxes represent inputs used by the AgentExecutor that creates plans and determines actions to be used in execution. This is sent to GeminiAPI, which then performs"}
+```{r, fig.cap="Diagram of the Agent Execution Process, Curved Boxes represent inputs used by the AgentExecutor that creates plans and determines actions to be used in execution. This is sent to GeminiAPI, which uses all the information gathered to produce an output response."}
 knitr::include_graphics("figure/fig1.png")
 ```
 
 
 ## Model Selection
-Google Gemini Flash was chosen as it has a free to use API with a large number of tokens available for use. Local Models were not used due to limited computational resources making even the smaller models take too long to perform document retrieval tasks. Though OpenAI was also considered as a model choice, their API required a subscription fee.
+Google Gemini Flash was chosen as it has a free to use API with a large number of tokens available for use. Local Models were not used due to limited computational resources making even the smaller models take too long to perform document retrieval tasks (Couldn't be ran on my device). Though OpenAI was also considered as a model choice, their API required a subscription fee.
 
-## System Prompt
+## System Prompt {#sysprompt}
 The system was provided with a prompt that informs it that it is an assistant capable of answering various topics, from simple topics to deep discussions. It is also told to act as a spatial transcriptomics expert, and that answers should be kept technical, but concise. 
 
-Additional system prompts include the definitions of various categories for each spatial algorithm as determined by human experts which can be seen [here](https://docs.google.com/spreadsheets/d/1P1-Nw0i_MpLoE8he1H7ZT-acYd4jOgDPrKZBxR-L6dw/edit?gid=0#gid=0). This ranged from things such as clustering method (Bayesian, Graph-based, Autoencoder, Centroid, Hierarchical-based), Scalability, Assumptions, Input data, programming language and metrics + simulations employed in the article. See the `prompts.py` file for more information regarding the specific details.
+Additional system prompts include the definitions of various categories for each spatial algorithm as determined by human experts which can be seen [here](https://docs.google.com/spreadsheets/d/1P1-Nw0i_MpLoE8he1H7ZT-acYd4jOgDPrKZBxR-L6dw/edit?gid=0#gid=0). This ranged from things such as clustering method (Bayesian, Graph-based, Autoencoder, Centroid, Hierarchical-based), Scalability, Assumptions, Input data, programming language and metrics + simulations employed in the article. See the [`prompts.py`](https://github.com/Ayas-N/st-llm/blob/main/prompts.py) file for more information regarding the specific details.
 
 ## Information Review Sheet
-The spatial information review sheet had its categories filled in by 2 domain experts. On top of discrete categories, various columns of the sheet also contained details of the experts' thoughts of the algorithm on things such as realism, additional datasets, and comments.
+The spatial information review sheet had each of its spatial clustering methods reviewed and filled in by a large group of domain experts in pairs to ensure consistency and validity. On top of discrete categories, various columns of the sheet also contained details of the experts' thoughts of the algorithm on things such as realism, additional datasets, and comments.
 
-## RAG Process
+## RAG Process{#RAG}
 The RAG process begins by taking in a scientific article in the form of an input pdf file by loading it using the PyPDFLoader package. It is then broken down into several chunks using a RecursiveTextCharacterSplitter to improve proccessing efficiency, this can then be converted to vectors via an embedding model. The vectors are then stored in a Chroma vector database, which can be fetched from the LLM via a document retriever. A document retriever attempts to find the most relavant information in relation to a user query (In this case, the user's question). To improve the RAG process, an ensemble retriever was used consisting of the following: The first retriever uses a vector similarity search from the Chroma vector database by looking at vectors that were closer to the query in a high dimensional space. The second is a BM25 retriever which ranks the best match 25 chunks based on relevance to the given query.
 
 ## Tavily Search
@@ -48,21 +51,22 @@ Tavily Search API is a web search engine API that can be used by an LLM during t
 With all this in mind, we can now discuss the methodology for evaluation.
 
 ## Data Collection
-Five different methods were evaluated:
+Four different methods were evaluated:
 
 1. The Agent with all tools available.
 2. The Agent without Tavily Search.
 3. The Agent without document retrievers.
-4. The Agent with no tools available
-5. ChatGPT's end-user interface.
+4. ChatGPT's end-user interface.
 
-In each of these methods, a scientific article of a spatial clustering method was provided, along with a user prommpt that tells the agent to categorise the spatial clustering method all the fields as described in the **System** Prompt section. With the following structure:
+The variations of the Agent were evaluated as it assessed the usefulness of tools used by the agent and its stability. ChatGPT was used as a benchmark for agent performance against another existing LLM architecture.
+
+In each of these methods, a scientific article of a spatial clustering method was provided, along with a user prompt that tells the agent to categorise the spatial clustering method all the fields as described in section \@ref(sysprompt). With the following structure:
 
 `<Category>,<Answer>`
 
 Each result was stored in the form of a csv file under the file structure <method_name>/<article_name>.csv. For accessing the ChatGPT end-user application, Selenium was used to simulate an end-user entering the system prompt along with a prompt asking it to summarise a spatial clustering method.
 
-This process was repeated until all 5 methods contained all csvs.
+Up to 16 spatial clustering methods were used in this process, and this process was repeated across the four evaluated LLMs.
 
 ## Data Loading
 Dataframes were created by accessing each directory and reading each individual csv file. The csvs were transposed and added into a dataframe one row at a time. Once all csvs were retrieved and appended, an additional column specifying the LLM method was added to the dataframe.
@@ -135,10 +139,10 @@ reactable(rounded_df)
 ```
 # Deployment 
 ## Approach
-The application of the agent has been deployed using Streamlit frmaework on Python and can be accessed [here](https://stllmchat.streamlit.app/). The agent has the following features:
+The application of the agent has been deployed using Streamlit framework on Python and can be accessed [here](https://stllmchat.streamlit.app/). The agent has the following features:
 
 ## Retrieval Augmented Generation (RAG)
-As described in the Methods section, the Agent is capable of Retrieval Augmented Generation using an input PDF file. This is implemented in the Streamlit application by giving the user the option to upload the file. The LLM will then consider using the information retrieved from this document depending on the question asked.
+As described in section \@ref(RAG), the Agent is capable of Retrieval Augmented Generation using an input PDF file. This is implemented in the Streamlit application by giving the user the option to upload the file. The LLM will then consider using the information retrieved from this document depending on the question asked.
 
 ```{r, fig.cap= "Agent is able to perform RAG using user uploaded pdf files"}
 knitr::include_graphics("figure/app_example1.png")
@@ -161,4 +165,5 @@ Future work can involve investigating agentic workflows using other state-of-the
 # Conclusion
 An agent was created and deployed to summarise aspects of spatial clustering methods employed in the field of spatial transcriptomics. It was shown that a Gemini Agent that made use of RAG and TavilySearch tools was capable of outperforming the ChatGPT end-user application in terms of correctness in categorising aspects such as methods, instructions, metrics, scalability, and simulations employed in a scientific article. The best iteration of the Agent made use of RAG without web search, however more work is needed to increase the depth of understanding and reasoning provided by an LLM when it came to justifying it's answers.
 
+# References
 
